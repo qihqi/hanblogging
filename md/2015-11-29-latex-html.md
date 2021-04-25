@@ -1,10 +1,10 @@
----
+<!---
 layout: post
 title:  "Como tipear f&oacute;rmulas ch&eacute;veres in cualquier compu, sin instalar nada"
 date:   2015-11-29
 categories: herramientas 
 tags: matematicas, latex
----
+-->
 
 <b>ML;NL(TL;DR) El truco es usar LaTex in HTML. (Sigue leyendo si no sabes de que hablo).</b>
 

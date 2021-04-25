@@ -1,10 +1,10 @@
----
+<!--
 layout: post
 title:  "Teorema de Matrimonio Estable, y un aspecto machista de la sociedad"
 date:   2015-10-31
 tags: matematica combinatoria grafo apareamiento
 categories: matematicas
----
+-->
 
 Hace mucho mucho tiempo, en un lugar muy muy lejano, habia un pueblo aislado de los otros pueblos.
 El pueblo hay  \\( n \\)  hombres y \\( n \\) mujeres solteros en edad de casarse. Y el matrimonio es 

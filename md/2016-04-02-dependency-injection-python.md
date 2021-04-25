@@ -1,10 +1,10 @@
----
+<!--
 layout: post
 title:  "Dependency Injection in Bottle/Flask (Python)"
 date:   2016-04-02
 tags: python xml ats
 categories: python
----
+-->
 
 Primer on Dependency Injection
 ------------------------------

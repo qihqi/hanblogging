@@ -6,10 +6,6 @@ tags: python xml ats
 categories: programacion python
 -->
 
-Una forma alterna de generar XML
-================================
-
-
 
 ML;NL(TL;DR): Si has hecho p&aacute;ginas con plantillas de HTML, puedes usar lo mismo para XML.
 

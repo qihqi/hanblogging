@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Una forma alterna de generar XML</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <!--
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="post.html">Sample Post</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        -->
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <div class="post-heading">
+                            <h1>Una forma alterna de generar XML</h1>
+                            <h2 class="subheading">2015-10-22 </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <p>ML;NL(TL;DR): Si has hecho p&amp;aacute;ginas con plantillas de HTML, puedes usar lo mismo para XML.</p>
+<p>Si quieres ingresar facturas emitidas al sistema de SRI, tiene 2 formas:
+o tipeas esos datos manualmente usando el aplicacion Java que se baja 
+en las pajinas de SRI, o generas archivos de algun formato que ellos puede 
+entender e importar al aplicacion antemencionado.</p>
+<p>Entre ellos, tuve un request de generar archivos XML compartible para declarar el 
+&quot;Anexo Transaccional Simplificado&quot; (ATS).</p>
+<p>La ficha tecnica de ATS se encuentra <a href="http://descargas.sri.gob.ec/download/anexos/ats/FICHA_TECNICA_ATS_NUEVO_AGOSTO2013_V1.doc">aqui</a></p>
+<p>Basicamente, se requiere un archivo en XML que se ve asi:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;</span>
+<span class="nt">&lt;iva&gt;</span>
+  <span class="nt">&lt;TipoIDInformante&gt;</span>R<span class="nt">&lt;/TipoIDInformante&gt;</span>
+  <span class="nt">&lt;IdInformante&gt;&lt;/IdInformante&gt;</span> <span class="c">&lt;!-- RUC --&gt;</span>
+  <span class="nt">&lt;razonSocial&gt;&lt;/razonSocial&gt;</span> <span class="c">&lt;!-- nombre de la compania --&gt;</span>
+  <span class="nt">&lt;totalVentas&gt;&lt;/totalVentas&gt;</span>
+  <span class="c">&lt;!-- mas campos emitidos --&gt;</span>
+  <span class="nt">&lt;compras&gt;</span>
+    <span class="c">&lt;!-- una lista de compras --&gt;</span>
+  <span class="nt">&lt;/compras&gt;</span>
+  <span class="nt">&lt;ventas&gt;</span>
+    <span class="c">&lt;!-- Aqui viene uno de estos por cada cliente --&gt;</span>
+    <span class="nt">&lt;detalleVentas&gt;</span>
+      <span class="nt">&lt;idCliente&gt;</span>123<span class="nt">&lt;/idCliente&gt;</span>
+      <span class="nt">&lt;valorRetIva&gt;</span>0.00<span class="nt">&lt;/valorRetIva&gt;</span>
+      <span class="nt">&lt;valorRetRenta&gt;</span>0.00<span class="nt">&lt;/valorRetRenta&gt;</span>
+      <span class="c">&lt;!-- mas campos emitidos --&gt;</span>
+    <span class="nt">&lt;/detalleVentas&gt;</span>
+  <span class="nt">&lt;/ventas&gt;</span>
+  <span class="nt">&lt;ventasEstablecimiento&gt;</span>
+    <span class="nt">&lt;ventaEst&gt;</span>
+      <span class="nt">&lt;codEstab&gt;</span>001<span class="nt">&lt;/codEstab&gt;</span>
+      <span class="nt">&lt;ventasEstab&gt;&lt;/ventasEstab&gt;</span>
+    <span class="nt">&lt;/ventaEst&gt;</span>
+  <span class="nt">&lt;/ventasEstablecimiento&gt;</span>
+
+  <span class="nt">&lt;anulados&gt;</span>
+    <span class="c">&lt;!-- Aqui viene uno de estos por cada uno de facturas anulados --&gt;</span>
+    <span class="nt">&lt;detalleAnulados&gt;</span>
+      <span class="nt">&lt;tipoComprobante&gt;</span>01<span class="nt">&lt;/tipoComprobante&gt;</span>
+      <span class="nt">&lt;autorizacion&gt;</span>1111897538<span class="nt">&lt;/autorizacion&gt;</span>
+      <span class="c">&lt;!-- mas campos emitidos --&gt;</span>
+    <span class="nt">&lt;/detalleAnulados&gt;</span>
+  <span class="nt">&lt;/anulados&gt;</span>
+<span class="nt">&lt;/iva&gt;</span>
+</pre></div>
+<p>Como ya he hecho un servicio REST que retorna JSON, asum&amp;iacute; que retornar XML
+en vez de JSON no es muy diferente. Que consistir&amp;aacute;n pasos como:</p>
+<ol>
+<li>generar objetos con datos de bases de dato</li>
+<li>convertir objetos en un dictionario (dict).</li>
+<li>Convertir dict en XML (previamente en JSON, que es sincillamente llamando a json.dumps).</li>
+</ol>
+<p>Googlee &quot;python generate xml&quot;, y llegu&amp;eacute; a la biblioteca de <a href="https://pymotw.com/2/xml/etree/ElementTree/create.html">lxml</a>. Me di cuenta que tener diccionario no sirve para un carajo, y hay que generar XML desde principio.</p>
+<p>Planee de escribir un base class que generara XML como lo hice para dict con 
+<a href="https://github.com/qihqi/HenryFACTService/blob/new_schema/henry/base/serialization.py#L84">SerializableMixin aqui</a>, 
+luego crear 4 clases, para ventasEstablecimiento, detalleVentas, detalleAnulados, e iva (que contiene a los demas).
+Pero me puse vago por unos d&amp;iacute;as...</p>
+<p>Cuando volv&amp;iacute; a ver el problema, y viendo las p&amp;aacute;ginas web que estoy haciendo con HTML. Se me
+peg&amp;oacute; que HTML es XML, HTML es XML!! HTML es XML!!! (repite 3 veces para las cosas importantes). Y teniendo
+ya a&amp;ntilde;os escribiendo platillas que genera HTML, porque no uso lo mismo para XML!!.</p>
+<p>Al final, escrib&amp;iacute; un plantilla de jinja2 <a href="https://github.com/qihqi/HenryFACTService/blob/new_schema/templates/accounting/ats.xml"><strong>aqui</strong></a>. Que es basicamente copia y pega del formato de arriba.</p>
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <hr />
+        <!-- Footer-->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <!--
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                                -->
+                            <li class="list-inline-item">
+                                <a href="https://github.com/qihqi">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <p class="copyright text-muted">Copyright &copy; Han Qi 2021</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

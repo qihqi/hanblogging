@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Log de entrevista: Google</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <!--
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="post.html">Sample Post</a></li>
+                        <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        -->
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <div class="post-heading">
+                            <h1>Log de entrevista: Google</h1>
+                            <h2 class="subheading">2015-10-10 </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <p>Lo de abajo son las preguntas de entrevistas que me preguntaron en la ronda de entrevista por tel&amp;eacute;fono 
+con Google. Lo escrib&amp;iacute; hace par de meses para apoyar a mi mejor amiga que estaba aplicando para ser
+ing. de software tambi&amp;eacute;n. Bueno dejo de hablar huevadas y aquí son la primera pregunta técnica, espero 
+que a alguien le sirve.</p>
+<p>###Primera pregunta
+Dado un arreglo de numeros de un digito, digamos [1,2,5,9], que representa el número 1259. Retorna un arreglo de numeros de un dígito de la misma forma, representando el número + 1. Es decir, si me da [1,2,5,9] debo retornar [1,2,6,0].</p>
+<p>Lo cagado del problema presenta cuando el último dígito es 9, ya que hay que sumar 1 al dígito anterior también; y si ese tambien es 9, hay que hacer lo mismo para el dígito anterior. Y en el peor caso, si te da [9,9,9,9] debes retornar [1,0,0,0,0] necesitas aumentar el tamano del arreglo también. Eso es lo jodido.</p>
+<p>Le pregunte si podia usar python, y me acepto. Luego escribi algo asi:</p>
+<p>{% highlight python%}
+def increment_one(num_array):
+    if not num_array:
+        return [1]
+    last_digit = num_array[-1]
+    if last_digit &lt; 9:
+        num_array[-1] += 1
+        return num_array
+    return increment_one(num_array[:-1]) + [0]
+{% endhighlight %}</p>
+<p>(Nota: después que ya me dio la entrevista onsite, me di cuenta que hice una CAGADA aqui. 
+Quizas uds ya se dieron cuenta, pero de todos modos los verán  al final)</p>
+<p>###Segunda pregunta:
+Dado el interface Iterator de Java:
+{% highlight java %}
+interface Iterator {
+  bool hasNext();
+  Object next();
+}
+{% endhighlight %}</p>
+<p>bool hasNext() que te diga si hay siguiente elemento, y Object next() que retorna el siguiente elemento y avanza el iterator por uno; implemente una clase de Iterator que aparte de esos 2 metodos, tenga un tercer metodo Object peek(), que retorna el elemento sin avanzar el iterator. La clase nueva acepta un Iterator en el constructor.</p>
+<p>Es decir algo asi:
+{% highlight java %}
+class PeekIterator implements Iterator {
+    PeekIterator(Iterator i) {} 
+    bool hasNext() {}
+    Object next() {}
+    Object peek() {} 
+} 
+{% endhighlight %}</p>
+<p>Pensado un rato, para poder saber cual es el siguiente elemento cuando llama peek(), tenemos que llamar next() del iterator pasado. Y para no avanzar el iterator, hay que recordar ese valor de alguna forma para usarlo de nuevo cuando peek o next sea llamado. Entonces primero hay que declarar un Object para guardar esa referencia:</p>
+<p>{% highlight java %}
+class PeekIterator implements Iterator {
+    Iterator source;
+    Object temp;
+    PeekIterator(Iterator i) {
+        source = i;
+    } 
+    bool hasNext() {
+        if (temp != null) {
+            return true; 
+        } 
+        return source.hasNext();
+    }
+    Object next() {
+        if (temp != null) {
+            Object return = temp;
+            temp = null;
+            return temp;
+        }
+        return source.next();
+    }
+    Object peek() {
+        if (temp == null) {
+            temp = source.next();
+        }
+        return temp;
+    } 
+} 
+{% endhighlight %}</p>
+<p>Entonces, si llama peek, veremos el siguiente elemento usando next, pero acordamos ese valor. Para la siguiente llamada de peek o next, retornamos ese valor. Si llama a next, hay que descartar el valor de peek ya que el iterator avanzo.</p>
+<p>Todo esta bonito.</p>
+<p>Luego el entrevistador me recordo que source.next() puede retornar null, en el caso si metes un null a una List 
+por ejemplo. Entonces cambie al codigo para use un boolean para acordar si temp tiene un valor valido o no. (De ley 
+me quit&amp;oacute; puntos aqu&amp;iacute;).</p>
+<p>###La tercera pregunta:</p>
+<p>Dado una cadena con caracteres ‘1’, ‘0’ y ‘?’. Digamos ‘1001?1?00?’ imprima todas las combinaciones reemplazando ? por 1 o 0.</p>
+<p>Es decir, si hay 3 ?’s, tendre que hacer 8 combinaciones replazando ? por 1 o 0.
+Esto se puede hacer con recursiones facilmente. Pero la forma que pense es: es como si genero numeros binarios de 0 hasta 11111 (numeros de 1 es iguales a numeros de ?), y luego replazo cada ? por el numero de digitos correspondiente.</p>
+<p>Podia generar esos numeros usando un entero luego convirtiendo en una cadena en representacion binario, pero ese entonces me dio pereza ya que si los numeros esta representados como un arreglo de digitos es mas facil. Y puedo reusar la respuesta del pregunta 1; cambiando numero decimal a numeros binarios.</p>
+<p>{% highlight python %}
+def increment_one(num_array):
+    if not num_array:
+        return [1]
+    last_digit = num_array[-1]
+    if last_digit &lt; 1:
+        num_array[-1] += 1
+        return num_array
+    return increment_one(num_array[:-1]) + [0]
+{%endhighlight%}</p>
+<p>teniendo esta funcion, el resto es sencillo:</p>
+<p>{% highlight python %}
+def printallcombination(format):
+    num_interrogation = count(filter(lambda s: s=='?'), format)
+    start = [0] * num_interrogation
+    print_format = format.replace('?', '%d')
+    while True:
+        print print_format % start
+        start = increment_one(start)
+        if len(start) &gt; num_interrogation:
+            break
+{%endhighlight%}</p>
+<p>(Y parece que le gust&amp;oacute; que he reusado el c&amp;oacute;digo anterior. :))</p>
+<p>(la cagada de la primera pregunta es que num_array[:-1] crea una arreglo nuevo con elementos del viejo, y es tiempo lineal con respecto al tamaño del arreglo. Entonces el tiempo de ejecución termina siendo cuadrática en el peor caso, que es bien barbacha…)</p>
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <hr />
+        <!-- Footer-->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-10 mx-auto">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <!--
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                                -->
+                            <li class="list-inline-item">
+                                <a href="https://github.com/qihqi">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <p class="copyright text-muted">Copyright &copy; Han Qi 2021</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
