@@ -1,6 +1,6 @@
 <!--
 layout: post
-title: "读 crafting interpreters 有感"
+title: "Crafting Interpreters Review"
 date: 2021-04-25
 banner: mountain.png
 tags: interpreters
@@ -79,6 +79,6 @@ get around of Java's type system，我当时复刻用了python就没用visitor p
 总体来说感觉干货满满。推荐给大家共同学习。
 传送门 -> [https://craftinginterpreters.com/](https://craftinginterpreters.com/)
 
-作者Bob Nystrom是谷歌dart 语言团队的工程师。我内网查了感觉6级的样子。
+作者Bob Nystrom是谷歌dart 语言团队的工程师。我记得以前在内网查过感觉6级的样子。
 他书的内容应该就是本科第一个编译器课的内容。不过书里面的图和解释啥的
 做得真不错,放ppt里面应该能升8🤣🤣🤣
