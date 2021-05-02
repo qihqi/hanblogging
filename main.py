@@ -29,6 +29,46 @@ jinja_env = jinja2.Environment(loader=loader)
 
 TEMPLATE = open('templates/post.html').read()
 
+@dataclass
+class PostMeta:
+    layout: str
+    title: str
+    date: datetime.date
+    tags: List[str]
+    categories: List[str]
+    enabled: bool
+
+
+    @classmethod
+    def from_dict(cls, input_dict):
+        post = cls()
+        post.layout = input_dict['layout']
+        post.title = input_dict['title']
+        post.date = input_dict['date']
+        post.enabled = input_dict.get('enabled', False)
+
+        if isinstance(input_dict, list):
+            post.tags = input_dict['tags']
+        else:
+            post.tags = input_dict['tags'].split()
+
+        if isinstance(input_dict['categories'], list):
+            post.categories = input_dict['categories']
+        else:
+            post.categories = input_dict['categories'].split()
+
+
+
+<!---
+layout: post
+title:  "Una forma alterna de generar XML"
+date:   2015-10-22
+tags: python xml ats
+categories: programacion python
+-->
+
+
+
 
 @bottle.get('/<path:path>')
 def get_file(path):
@@ -69,12 +109,23 @@ def render_md_file(dirname, filename):
             banner=dest_header.get('banner'),
             content=dest_content
         ))
+    dest_header['href'] = os.path.join(relpath, source_name + '.html')
+    return dest_header
 
 
 def render_all():
+    posts = []
     for root, dirs, files in os.walk(config.MD_DIR):
         for f in files:
-            render_md_file(root, f)
+            print(f)
+            header = render_md_file(root, f)
+            header['summary'] = 'I am summary'
+            posts.append(header)
+
+    with open(os.path.join(config.HTML_DIR, 'index.html'), 'w') as f:
+        f.write(jinja_env.get_template('index.html').render(posts=posts))
+
+
 
 
 if __name__ == '__main__':
