@@ -4,6 +4,7 @@ title:  "Una forma alterna de generar XML"
 date:   2015-10-22
 tags: python xml ats
 categories: programacion python
+enabled: true
 -->
 
 

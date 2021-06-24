@@ -61,58 +61,61 @@ have two types of objects: <em>Data objects</em>, where
 stores the data and <em>Service objects</em>, which manipulates the data. For example,
 if it is a database backed application it usually has some
 object that talks to the database, which is the Service object.</p>
-<p>Say, we have 3 service objects
-{% highlight python%}
-class ServiceA(object):
-    def do_work():
-        pass</p>
-<p>class ServiceB(object):
-    def do_work():
-        pass</p>
-<p>class ServiceC(object):
-    def do_work():
-        pass
-{% endhighlight %}</p>
+<p>Say, we have 3 service objects</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServiceA</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ServiceB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ServiceC</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="k">pass</span>
+</pre></div>
 <p>Now say, that ServiceB need to use ServiceA, it need to get to ServiceA somehow.
 One of the antipatterns people used to use is to make ServiceA a singleton,
 then you have something like this:</p>
-<p>{% highlight python%}
-class ServiceA(object):
-    def do_work():
-        pass</p>
-<pre><code>@classmethod
-def get_instance(cls):
-    # blah blah
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServiceA</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="k">pass</span>
 
-</code></pre><p>class ServiceB(object):
-    def do_work():
-        ServiceA.get_instance().do_work()</p>
-<p>class ServiceC(object):
-    def do_work():
-        pass
-{% endhighlight %}</p>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># blah blah</span>
+
+<span class="k">class</span> <span class="nc">ServiceB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="n">ServiceA</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">do_work</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ServiceC</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+        <span class="k">pass</span>
+</pre></div>
 <p><em>Dependency Injection</em> basically says, <em>don't do that shit!!</em> Using singleton
 making testing of ServiceB a pain, and makes it impossible to let ServiceB
 work with another service similar to A. If ServiceB needs ServiceA, it should
-ask it in the constructor, like this:
-{% highlight python%}
-class ServiceA(object):
-    def do_work(self):
-        pass</p>
-<pre><code>@classmethod
-def get_instance(cls):
-    # blah blah
+ask it in the constructor, like this:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ServiceA</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-</code></pre><p>class ServiceB(object):
-    def <strong>init</strong>(self, service_a):
-        self.service_a = service_a</p>
-<pre><code>def do_work(self):
-    self.service_a.do_work()
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># blah blah</span>
 
-</code></pre><p>class ServiceC(object):
-    def do_work(self):
-        pass
-{% endhighlight %}</p>
+<span class="k">class</span> <span class="nc">ServiceB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_a</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_a</span> <span class="o">=</span> <span class="n">service_a</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_a</span><span class="o">.</span><span class="n">do_work</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ServiceC</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
 <p><a href="https://www.youtube.com/watch?v=-FRm3VPhseI">This (pretty long) Google talk explains this idea very well</a>.</p>
 <p>Sometimes the term <em>Dependency Injection</em> is sometimes refers a dependency injection
 framework, like Spring and Guice for Java, all that those framework does it to
@@ -123,31 +126,33 @@ it as the idea of asking dependencies explicitly, usually in constructors.</p>
 like the main function. However, most web frameworks there is no such
 entry point.</p>
 <p>Here is a extremely simple wsgi app written with bottle.</p>
-<p>{% highlight python%}
-import bottle
-app = Bottle()
-@app.get('/')
-def index():
-    return 'hello world'</p>
-<p>if <strong>name</strong> == '<strong>main</strong>':
-    bottle.run(app)
-{% endhighlight %}</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bottle</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">bottle</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
 <p>Now, index needs to use ServiceA, ServiceB, and ServiceC. Where do you put them?
 Usual approaches are using globals, annotations or closures.</p>
 <h2>As globals</h2>
-<p>{% highlight python%}
-import bottle
-app = Bottle()</p>
-<p>a = ServiceA()
-b = ServiceB(service_a=a)
-c = ServiceC(b, a)</p>
-<p>@app.get('/')
-def index():
-    # do stuff with a,b,c
-    return 'hello world'</p>
-<p>if <strong>name</strong> == '<strong>main</strong>':
-    bottle.run(app)
-{% endhighlight %}</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bottle</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">ServiceA</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">ServiceB</span><span class="p">(</span><span class="n">service_a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">ServiceC</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="c1"># do stuff with a,b,c</span>
+    <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">bottle</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
 <p>Note that here a, b, c are effectively singletons, but that does not
 violate principles of dependency injection because inside of ServiceB does not
 read ServiceA from the global, but from its member variable. That makes
@@ -161,20 +166,22 @@ monkey patching. We can sort of mitigate that by move most of the functionality
 inside some service and let the url handler just forward the call, and leave
 those handlers untested.</p>
 <h2>Decorators</h2>
-<p>{% highlight python%}
-import bottle
-app = Bottle()</p>
-<p>a = ServiceA()
-b = ServiceB(service_a=a)
-c = ServiceC(b, a)</p>
-<p>@app.get('/')
-@uses_service(a,b,c)
-def index(a, b, c):
-    # do stuff with a,b,c
-    return 'hello world'</p>
-<p>if <strong>name</strong> == '<strong>main</strong>':
-    bottle.run(app)
-{% endhighlight %}</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bottle</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">ServiceA</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">ServiceB</span><span class="p">(</span><span class="n">service_a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">ServiceC</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@uses_service</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="c1"># do stuff with a,b,c</span>
+    <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">bottle</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
 <p>We can write a custom decorator to pass the dependent service as parameters to 
 the needed function.
 This makes it look little nicer, and gives the impression that index function is not reading
@@ -182,31 +189,32 @@ globals anymore. However, we cannot directly call index with custom a, b and
 c as the decorator call replaces the old function with a wrapped one. So it's really
 the same.</p>
 <p>Of course we can test the unwrapped version by not using decorator syntax,
-like this
-{% highlight python %}
-def index(a, b, c):
-    # do stuff with a,b,c
-    return 'hello world'
-app.get('/')(uses_service(a,b,c)(index))
-{% endhighlight %}</p>
+like this</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="c1"># do stuff with a,b,c</span>
+    <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)(</span><span class="n">uses_service</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)(</span><span class="n">index</span><span class="p">))</span>
+</pre></div>
 <p>but this is plain ugly. Also, doing this for every url handler could be a pain!</p>
 <h2>Using closures</h2>
-<p>{% highlight python%}
-import bottle</p>
-<p>def make_wgsi_app(a, b ,c)
-  app = Bottle()</p>
-<p>@app.get('/')
-  @uses_service(a,b,c)
-  def index(a, b, c):
-      # do stuff with a,b,c
-      return 'hello world'
-  return app</p>
-<p>if <strong>name</strong> == '<strong>main</strong>':
-    a = ServiceA()
-    b = ServiceB(service_a=a)
-    c = ServiceC(b, a)
-    bottle.run(make_wgsi_app(a, b, c))</p>
-<p>{% endhighlight %}</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bottle</span>
+
+<span class="k">def</span> <span class="nf">make_wgsi_app</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="p">,</span><span class="n">c</span><span class="p">)</span>
+  <span class="n">app</span> <span class="o">=</span> <span class="n">Bottle</span><span class="p">()</span>
+
+  <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+  <span class="nd">@uses_service</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+      <span class="c1"># do stuff with a,b,c</span>
+      <span class="k">return</span> <span class="s1">&#39;hello world&#39;</span>
+  <span class="k">return</span> <span class="n">app</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">ServiceA</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">ServiceB</span><span class="p">(</span><span class="n">service_a</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">ServiceC</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+    <span class="n">bottle</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">make_wgsi_app</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">))</span>
+</pre></div>
 <p>This is my favorite. It effectively put the service instantiation in the point
 of entry, and allows testing the wgsi app passing mocked out versions of
 service a b or c. Though, because make_wsgi_app returns a wsgi app instead of

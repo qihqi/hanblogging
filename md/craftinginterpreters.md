@@ -6,6 +6,7 @@ banner: mountain.png
 tags: interpreters
 categories: programming
 language: zh_CN
+enabled: yes
 -->
 
 今天读完了 Crafing Interpreters 这本书，

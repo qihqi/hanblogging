@@ -16,7 +16,7 @@ if it is a database backed application it usually has some
 object that talks to the database, which is the Service object.
 
 Say, we have 3 service objects
-{% highlight python%}
+```python
 class ServiceA(object):
     def do_work():
         pass
@@ -28,13 +28,13 @@ class ServiceB(object):
 class ServiceC(object):
     def do_work():
         pass
-{% endhighlight %}
+```
 
 Now say, that ServiceB need to use ServiceA, it need to get to ServiceA somehow.
 One of the antipatterns people used to use is to make ServiceA a singleton,
 then you have something like this:
 
-{% highlight python%}
+```python
 class ServiceA(object):
     def do_work():
         pass
@@ -50,13 +50,13 @@ class ServiceB(object):
 class ServiceC(object):
     def do_work():
         pass
-{% endhighlight %}
+```
 
 _Dependency Injection_ basically says, _don't do that shit!!_ Using singleton
 making testing of ServiceB a pain, and makes it impossible to let ServiceB
 work with another service similar to A. If ServiceB needs ServiceA, it should
 ask it in the constructor, like this:
-{% highlight python%}
+```python
 class ServiceA(object):
     def do_work(self):
         pass
@@ -75,7 +75,7 @@ class ServiceB(object):
 class ServiceC(object):
     def do_work(self):
         pass
-{% endhighlight %}
+```
 
 [This (pretty long) Google talk explains this idea very well](https://www.youtube.com/watch?v=-FRm3VPhseI).
 
@@ -94,7 +94,7 @@ entry point.
 Here is a extremely simple wsgi app written with bottle.
 
 
-{% highlight python%}
+```python
 import bottle
 app = Bottle()
 @app.get('/')
@@ -103,14 +103,15 @@ def index():
 
 if __name__ == '__main__':
     bottle.run(app)
-{% endhighlight %}
+    
+```
 
 Now, index needs to use ServiceA, ServiceB, and ServiceC. Where do you put them?
 Usual approaches are using globals, annotations or closures.
 
 As globals
 ----------
-{% highlight python%}
+```python
 import bottle
 app = Bottle()
 
@@ -125,7 +126,8 @@ def index():
 
 if __name__ == '__main__':
     bottle.run(app)
-{% endhighlight %}
+    
+```
 
 Note that here a, b, c are effectively singletons, but that does not
 violate principles of dependency injection because inside of ServiceB does not
@@ -143,7 +145,8 @@ those handlers untested.
 
 Decorators
 ----------
-{% highlight python%}
+
+```python
 import bottle
 app = Bottle()
 
@@ -159,7 +162,7 @@ def index(a, b, c):
 
 if __name__ == '__main__':
     bottle.run(app)
-{% endhighlight %}
+```
 
 We can write a custom decorator to pass the dependent service as parameters to 
 the needed function.
@@ -170,18 +173,19 @@ the same.
 
 Of course we can test the unwrapped version by not using decorator syntax,
 like this
-{% highlight python %}
+
+```python
 def index(a, b, c):
     # do stuff with a,b,c
     return 'hello world'
 app.get('/')(uses_service(a,b,c)(index))
-{% endhighlight %}
+```
 
 but this is plain ugly. Also, doing this for every url handler could be a pain!
 
 Using closures
 --------------
-{% highlight python%}
+```python
 import bottle
 
 def make_wgsi_app(a, b ,c)
@@ -200,7 +204,7 @@ if __name__ == '__main__':
     c = ServiceC(b, a)
     bottle.run(make_wgsi_app(a, b, c))
 
-{% endhighlight %}
+```
 
 This is my favorite. It effectively put the service instantiation in the point
 of entry, and allows testing the wgsi app passing mocked out versions of

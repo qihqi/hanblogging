@@ -136,7 +136,8 @@ def render_all():
         for f in files:
             print(f)
             post = render_md_file(root, f)
-            posts.append(post)
+            if post.enabled:
+                posts.append(post)
             
     posts = sorted(posts, key=lambda x: x.date, reverse=True)
 
