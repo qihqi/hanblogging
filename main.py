@@ -1,5 +1,8 @@
 import os
 import json
+from dataclasses import dataclass
+import datetime
+from typing import List
 
 import bottle
 import mistune
@@ -11,6 +14,8 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters import html
 
 import config
+
+SUMMARY_MAX_LENGTH = 100
 
 
 class HighlightRenderer(mistune.HTMLRenderer):
@@ -27,7 +32,16 @@ markdown = mistune.create_markdown(renderer=HighlightRenderer())
 loader = jinja2.FileSystemLoader('templates')
 jinja_env = jinja2.Environment(loader=loader)
 
-TEMPLATE = open('templates/post.html').read()
+
+"""
+<!---
+layout: post
+title:  "Una forma alterna de generar XML"
+date:   2015-10-22
+tags: python xml ats
+categories: programacion python
+-->
+"""
 
 @dataclass
 class PostMeta:
@@ -37,37 +51,37 @@ class PostMeta:
     tags: List[str]
     categories: List[str]
     enabled: bool
-
+    href: str
+    summary: str
 
     @classmethod
     def from_dict(cls, input_dict):
-        post = cls()
-        post.layout = input_dict['layout']
-        post.title = input_dict['title']
-        post.date = input_dict['date']
-        post.enabled = input_dict.get('enabled', False)
+        layout = input_dict['layout']
+        title = input_dict['title']
+        date = input_dict['date']
+        enabled = input_dict.get('enabled', False)
+        href = input_dict.get('href', '')
+        summary = input_dict.get('summary', '')
 
         if isinstance(input_dict, list):
-            post.tags = input_dict['tags']
+            tags = input_dict['tags']
         else:
-            post.tags = input_dict['tags'].split()
+            tags = input_dict['tags'].split()
 
         if isinstance(input_dict['categories'], list):
-            post.categories = input_dict['categories']
+            categories = input_dict['categories']
         else:
-            post.categories = input_dict['categories'].split()
-
-
-
-<!---
-layout: post
-title:  "Una forma alterna de generar XML"
-date:   2015-10-22
-tags: python xml ats
-categories: programacion python
--->
-
-
+            categories = input_dict['categories'].split()
+            
+        return cls(
+            layout=layout,
+            title=title,
+            date=date,
+            tags=tags,
+            categories=categories,
+            enabled=enabled,
+            href=href,
+            summary=summary)
 
 
 @bottle.get('/<path:path>')
@@ -89,6 +103,10 @@ def render_content(content):
         header_end = content.find('-->')
         header_txt = content[header_start:header_end]
         header.update(yaml.load(header_txt))
+        summary_end = content.find('.', header_end + 3)
+        if summary_end - header_end - 3 > 100:
+            summary_end = header_end + 3 + 100
+        header['summary'] = content[header_end + 3:summary_end] + '...'
         print(header)
     content_html = markdown(content[header_end + 3:])
     return header, content_html
@@ -96,36 +114,34 @@ def render_content(content):
 
 def render_md_file(dirname, filename):
     source = os.path.join(dirname, filename)
-    source_name, ext = os.path.splitext(filename)
+    source_name, _ = os.path.splitext(filename)
     relpath = os.path.relpath(dirname, config.MD_DIR)
     dest = os.path.join(
             config.HTML_DIR, relpath, source_name + '.html')
     with open(source) as source_file:
         dest_header, dest_content = render_content(source_file.read())
+    post = PostMeta.from_dict(dest_header)
     with open(dest, 'w') as dest_file:
         dest_file.write(jinja_env.get_template('post.html').render(
-            title=dest_header['title'],
-            post_time=dest_header.get('date'),
-            banner=dest_header.get('banner'),
+            meta=post,
             content=dest_content
         ))
-    dest_header['href'] = os.path.join(relpath, source_name + '.html')
-    return dest_header
+    post.href = os.path.join(relpath, source_name + '.html')
+    return post 
 
 
 def render_all():
     posts = []
-    for root, dirs, files in os.walk(config.MD_DIR):
+    for root, _, files in os.walk(config.MD_DIR):
         for f in files:
             print(f)
-            header = render_md_file(root, f)
-            header['summary'] = 'I am summary'
-            posts.append(header)
+            post = render_md_file(root, f)
+            posts.append(post)
+            
+    posts = sorted(posts, key=lambda x: x.date, reverse=True)
 
     with open(os.path.join(config.HTML_DIR, 'index.html'), 'w') as f:
         f.write(jinja_env.get_template('index.html').render(posts=posts))
-
-
 
 
 if __name__ == '__main__':
